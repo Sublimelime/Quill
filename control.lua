@@ -1,4 +1,3 @@
-global.notes = global.notes or {}
 
 
 function makeGui(player)
@@ -11,11 +10,11 @@ function makeGui(player)
 
    frame.style.visible = false --turn it off initially
 
-   local text = frame.add{type="textfield",name="quill-textfield"} --the actual place to write the notes
+   local text = frame.add{type="text-box",name="quill-textfield"} --the actual place to write the notes
 
-   text.style.minimal_height = 750
+   text.style.minimal_height = 700
    text.style.minimal_width = 750
-   text.style.maximal_height = 750
+   text.style.maximal_height = 700
    text.style.maximal_width = 750
 
    text.text = global.notes[player.index] or ""
@@ -48,11 +47,11 @@ end
 script.on_event({defines.events.on_player_created},
    function(e)
       local player = game.players[e.player_index]
-      global.notes[e.player_index] = ""
-
-      player.gui.left.add{type="button",name="quill-button",caption="Notes"}.tooltip = "Click to open/close notes."
-      makeGui(player) --make the gui
-
+      if not player.gui.center["quill-frame"] then
+         global.notes[e.player_index] = ""
+         player.gui.left.add{type="button",name="quill-button",caption="Notes"}.tooltip = "Click to open/close notes."
+         makeGui(player)
+      end
    end
 )
 
@@ -61,6 +60,19 @@ script.on_event({defines.events.on_gui_click},
       if e.element.name == "quill-button" or e.element.name == "quill-close" then
          local player = game.players[e.player_index]
          toggleGui(player)
+      end
+   end
+)
+
+script.on_init(
+   function()
+      global.notes = global.notes or {}
+      for index,player in pairs(game.players) do
+         if not player.gui.center["quill-frame"] then
+            global.notes[player.index] = ""
+            player.gui.left.add{type="button",name="quill-button",caption="Notes"}.tooltip = "Click to open/close notes."
+            makeGui(player)
+         end
       end
    end
 )
