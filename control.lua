@@ -124,14 +124,3 @@ script.on_init(
       end
    end
 )
-
-script.on_configuration_changed(
-   function()
-      for index,player in pairs(game.players) do --reset guis
-         player.gui.center["quill-frame"].destroy()
-         player.gui.left["quill-button"].destroy()
-         global.note_number[index] = 1
-         makeGui(player)
-      end
-   end
-)
