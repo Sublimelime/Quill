@@ -100,6 +100,13 @@ function constructNotesList(gui)
 
    operationsFlow.add{
       type="button",
+      name="quill-open-note-button",
+      caption="Open note",
+      tooltip="Opens the selected note."
+   }
+
+   operationsFlow.add{
+      type="button",
       name="quill-new-note-button",
       caption="New note",
       tooltip="Create a new note."
