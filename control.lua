@@ -115,7 +115,7 @@ function constructNotesList(gui)
       type="button",
       name="quill-delete-note-button",
       caption="Delete note",
-      tooltip="Deletes the currently selected note."
+      tooltip="Deletes the currently selected note. Must hold control to use."
    }
    operationsFlow.add{
       type="button",
@@ -123,15 +123,12 @@ function constructNotesList(gui)
       caption="Rename note",
       tooltip="Renames the currently selected note."
    }
-
-
    noteListFrame.add{
       type="button",
       name="quill-close-button",
       caption="Close",
       tooltip="Closes this gui."
    }
-
 
    return noteListFrame
 end

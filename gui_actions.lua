@@ -20,6 +20,9 @@ script.on_event({defines.events.on_gui_click},
       elseif element.name == "quill-cancel-note-button" then
          element.parent.parent.destroy()
          player.gui.center["quill-notes-list-frame"].style.visible = true --show list again
+      elseif element.name == "quill-cancel-rename-button" then
+         element.parent.destroy()
+         player.gui.center["quill-notes-list-frame"].style.visible = true --show list again
       elseif element.name == "quill-save-note-button" then
          if element.parent.parent.name == "quill-existing-note-frame" then
             saveExistingNote(player)
@@ -28,7 +31,11 @@ script.on_event({defines.events.on_gui_click},
          end
 
       elseif element.name == "quill-delete-note-button" then
-         deleteCurrentNote(player)
+         if event.control then
+            deleteCurrentNote(player)
+         else
+            player.print("Hold control while clicking to delete note.")
+         end
       elseif element.name == "quill-open-note-button" then
          if global.player_notes[player.index][player.gui.center["quill-notes-list-frame"]["quill-notes-list-drop-down"].selected_index] then
             element.parent.parent.style.visible = false
@@ -36,11 +43,70 @@ script.on_event({defines.events.on_gui_click},
          else
             player.print("There is no note at that position.")
          end
+      elseif element.name == "quill-rename-note-button" then
+         if global.player_notes[player.index][player.gui.center["quill-notes-list-frame"]["quill-notes-list-drop-down"].selected_index] then
+            player.gui.center["quill-notes-list-frame"].style.visible = false
+            makeRenameNoteGUI(player.gui.center)
+         else
+            player.print("Cannot rename a non-existant note.")
+         end
+      elseif element.name == "quill-confirm-rename-button" then
+         renameNote(player)
+         player.gui.center["quill-rename-note-frame"].destroy()
+         player.gui.center["quill-notes-list-frame"].style.visible = true
       end
 
    end
 )
+--Displays a gui for renaming a note
+function makeRenameNoteGUI(gui)
+   local player = game.players[gui.player_index]
+   local dropDown = gui["quill-notes-list-frame"]["quill-notes-list-drop-down"]
+   local renameNoteFrame= gui.add{
+      type="frame",
+      direction="horizontal",
+      name="quill-rename-note-frame",
+      caption="Rename " .. dropDown.items[dropDown.selected_index]
+   }
+   renameNoteFrame.add{
+      type="label",
+      caption="Rename note to: ",
+      name="quill-rename-note-label"
+   }
+   renameNoteFrame.add{
+      type="textfield",
+      name="quill-rename-note-text-field"
+   }
+   renameNoteFrame.add{
+      type="button",
+      caption="Rename",
+      tooltip="Rename this note.",
+      name="quill-confirm-rename-button"
+   }
 
+   renameNoteFrame.add{
+      type="button",
+      caption="Cancel",
+      name="quill-cancel-rename-button"
+   }
+   return renameNoteFrame
+end
+
+--Actually does the rename of the current note
+function renameNote(player)
+   local dropDown = player.gui.center["quill-notes-list-frame"]["quill-notes-list-drop-down"]
+   --fix the notes table
+   global.player_notes[player.index][dropDown.selected_index].name = player.gui.center["quill-rename-note-frame"]["quill-rename-note-text-field"].text
+
+   --Fix the dropdown
+   local itemsList = dropDown.items
+   itemsList[dropDown.selected_index] = player.gui.center["quill-rename-note-frame"]["quill-rename-note-text-field"].text
+   dropDown.items = itemsList
+   dropDown.selected_index = #dropDown.items
+end
+
+
+--Makes a gui for displaying an existing note
 function makeExistingNoteGUI(gui)
 
    local player = game.players[gui.player_index]
@@ -101,10 +167,10 @@ function makeNewNoteGUI(gui)
       caption="New untitled note"
    }
 
-   newNoteFrame.style.minimal_width = 500
-   newNoteFrame.style.maximal_height= 600
-   newNoteFrame.style.minimal_height = 600
-   newNoteFrame.style.maximal_width = 500
+   newNoteFrame.style.minimal_width = 450
+   newNoteFrame.style.maximal_height= 550
+   newNoteFrame.style.minimal_height = 550
+   newNoteFrame.style.maximal_width = 450
 
    local textBox= newNoteFrame.add{
       type="text-box",
@@ -147,8 +213,9 @@ function saveAsNewNote(player)
       --add the new note to the player's list of notes
       table.insert(global.player_notes[player.index],{name="Untitled",contents=textBox.text})
       --add the new note to the player's note list dropdown
-      player.gui.center["quill-notes-list-frame"]["quill-notes-list-drop-down"].add_item("Untitled")
-      player.gui.center["quill-notes-list-frame"]["quill-notes-list-drop-down"].selected_index = 1
+      local dropDown = player.gui.center["quill-notes-list-frame"]["quill-notes-list-drop-down"]
+      dropDown.add_item("Untitled")
+      dropDown.selected_index = #dropDown.items
       player.gui.center["quill-new-note-frame"].destroy() --close the new note screen
       player.gui.center["quill-notes-list-frame"].style.visible = true --show list again
    end
@@ -175,9 +242,12 @@ function deleteCurrentNote(player)
       return
    end
 
-
    --remove the note from the table
    table.remove(global.player_notes[player.index],dropDown.selected_index)
 
+   local itemsList = dropDown.items
+   table.remove(itemsList, dropDown.selected_index)
+   dropDown.items = itemsList
+   dropDown.selected_index = #dropDown.items
 
 end
