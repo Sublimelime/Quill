@@ -1,78 +1,25 @@
+--[[
+   Quill mod by Gangsir. This mod adds a gui for taking several notes,
+   allowing for players to keep track of things they need to remember,
+   resources they need for their next setup, etc.
+   To submit an issue for this mod, please visit the Bitbucket repository
+   denoted in the homepage of the mod.
 
+   The below comments are mostly for the author's memory, but may help
+   some understand the gui scripting better.
 
-function makeGui(player)
-   --make the initial frame, that holds the text box
-   local frame = player.gui.center.add{type="frame",name="quill-frame",caption="Notes"}
-   frame.style.minimal_width = 850
-   frame.style.maximal_width = 850
-   frame.style.minimal_height = 800
-   frame.style.maximal_height = 800
+   GUI NAME DEFINITIONS ----------
+   PLAYER.LEFT
+   quill-open-notes : The small button that opens up the mod's UI.
 
-   frame.style.visible = false --turn it off initially
+   PLAYER.CENTER
+   quill-notes-list-frame : The frame that holds a dropdown, and a few buttons. Used for selecting the note to edit/display.
+   quill-close-button : Generic close button, closes it's parent frame
+   quill-note-frame : A frame with a text field, rename button, delete button, text box, etc. Used for actually writing notes.
 
-   local text = frame.add{type="text-box",name="quill-textfield"} --the actual place to write the notes
+   ELEMENTS
+   quill-delete-button : Deletes the note that it's pressed on.
+   quill-rename-text-field : Text field used for renaming the current note.
+   quill-note-text-box : A text box used for actually writing the note.
 
-   text.style.minimal_height = 700
-   text.style.minimal_width = 750
-   text.style.maximal_height = 700
-   text.style.maximal_width = 750
-
-   text.text = global.notes[player.index] or ""
-
-   frame.add{type="button",name="quill-close",caption="Close",tooltip="Close this window."}
-
-end
-
---saves the text the player wrote into the global table.
-function saveText(player)
-   if global.notes[player.index] then
-      global.notes[player.index] = player.gui.center["quill-frame"]["quill-textfield"].text
-   end
-end
-
-
-function toggleGui(player)
-   local guiEle = player.gui.center["quill-frame"]
-
-   if guiEle.valid and guiEle.style.visible == true then
-      saveText(player)
-      guiEle.style.visible = false
-   else
-      guiEle.style.visible = true
-   end
-
-end
-
-
-script.on_event({defines.events.on_player_created},
-   function(e)
-      local player = game.players[e.player_index]
-      if not player.gui.center["quill-frame"] then
-         global.notes[e.player_index] = ""
-         player.gui.left.add{type="button",name="quill-button",caption="Notes"}.tooltip = "Click to open/close notes."
-         makeGui(player)
-      end
-   end
-)
-
-script.on_event({defines.events.on_gui_click},
-   function(e)
-      if e.element.name == "quill-button" or e.element.name == "quill-close" then
-         local player = game.players[e.player_index]
-         toggleGui(player)
-      end
-   end
-)
-
-script.on_init(
-   function()
-      global.notes = global.notes or {}
-      for index,player in pairs(game.players) do
-         if not player.gui.center["quill-frame"] then
-            global.notes[player.index] = ""
-            player.gui.left.add{type="button",name="quill-button",caption="Notes"}.tooltip = "Click to open/close notes."
-            makeGui(player)
-         end
-      end
-   end
-)
+--]]
