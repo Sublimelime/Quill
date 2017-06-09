@@ -5,6 +5,10 @@ script.on_event({defines.events.on_gui_click},
       local element = event.element
       local player = game.players[event.player_index]
 
+      if not string.find(element.name,"quill") then --has nothing to do with this mod
+         return
+      end
+
       if element.name == "quill-close-button" then --used only for the note list gui
          element.parent.style.visible = false
       elseif element.name == "quill-open-notes" then
@@ -15,8 +19,9 @@ script.on_event({defines.events.on_gui_click},
          element.parent.destroy()
       elseif element.name == "quill-cancel-note-button" then
          element.parent.parent.destroy()
+      elseif element.name == "quill-save-note-button" then
+         saveAsNewNote(player)
       end
-
    end
 )
 
@@ -25,7 +30,7 @@ function makeNewNoteGUI(gui)
       type="frame",
       direction="vertical",
       name="quill-new-note-frame",
-      caption="New note"
+      caption="New untitled note"
    }
 
    newNoteFrame.style.minimal_width = 500
@@ -63,4 +68,15 @@ function makeNewNoteGUI(gui)
    }
 
    return newNoteFrame
+end
+
+--Saves the currently open note as a new note.
+function saveAsNewNote(player)
+   if player.gui.center["quill-new-note-frame"]["quill-note-text-box"] then
+      local textBox = player.gui.center["quill-new-note-frame"]["quill-note-text-box"]
+      --add the new note to the player's list of notes
+      table.insert(global.player_notes[player.index],{name="Untitled",contents=textBox.text})
+      --add the new note to the player's note list dropdown
+      player.gui.center["quill-notes-list-frame"]["quill-notes-list-drop-down"].add_item("Untitled")
+   end
 end
