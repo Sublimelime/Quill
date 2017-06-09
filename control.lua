@@ -1,4 +1,5 @@
 require("gui_actions")
+require("gui_creation")
 
 --[[
    Quill mod by Gangsir. This mod adds a gui for taking several notes,
@@ -52,83 +53,3 @@ script.on_event({defines.events.on_player_created},
       nukeAndRegenUI(game.players[e.player_index])
    end
 )
-
---Regenerates the UI of the mod completely, in the event of init or a new player.
-function nukeAndRegenUI(player)
-   local lGui = player.gui.left
-   local cGui = player.gui.center
-
-   --Clear the existing mod's GUI
-   if lGui["quill-open-notes"] then
-      lGui["quill-open-notes"].destroy()
-   end
-   if cGui["quill-notes-list-frame"] then
-      cGui["quill-notes-list-frame"].destroy()
-   end
-   if cGui["quill-note-frame"] then
-      cGui["quill-note-frame"].destroy()
-   end
-
-   lGui.add{ --add the open notes button
-      type="button",
-      caption="Notes",
-      tooltip="Click to open notes.",
-      name="quill-open-notes"
-   }
-
-   local noteListFrame =  constructNotesList(cGui)
-
-end
-
-function constructNotesList(gui)
-   local noteListFrame= gui.add{
-      type="frame",
-      caption="Notes",
-      name="quill-notes-list-frame",
-      direction="vertical"
-   }
-   noteListFrame.add{
-      type="drop-down",
-      name="quill-notes-list-drop-down",
-   }
-   -- Add operation buttons, for stuff like new notes, deleting notes, etc.
-   local operationsFlow = noteListFrame.add{
-      type="flow",
-      direction="horizontal",
-      name="quill-note-operations-flow",
-   }
-
-   operationsFlow.add{
-      type="button",
-      name="quill-open-note-button",
-      caption="Open note",
-      tooltip="Opens the selected note."
-   }
-
-   operationsFlow.add{
-      type="button",
-      name="quill-new-note-button",
-      caption="New note",
-      tooltip="Create a new note."
-   }
-   operationsFlow.add{
-      type="button",
-      name="quill-delete-note-button",
-      caption="Delete note",
-      tooltip="Deletes the currently selected note. Must hold control to use."
-   }
-   operationsFlow.add{
-      type="button",
-      name="quill-rename-note-button",
-      caption="Rename note",
-      tooltip="Renames the currently selected note."
-   }
-   noteListFrame.add{
-      type="button",
-      name="quill-close-button",
-      caption="Close",
-      tooltip="Closes this gui."
-   }
-
-   return noteListFrame
-end
