@@ -82,6 +82,12 @@ function makeExistingNoteGUI(gui)
       tooltip="Exit without saving note.",
       name="quill-cancel-note-button"
    }
+   saveCancelFlow.add{
+      type="button",
+      caption="Chat",
+      tooltip="Print this entire note to chat, for sharing. If you are not an admin, your max print length depends on your time played on this save.",
+      name="quill-print-note-to-chat-button"
+   }
 
    gui["quill-notes-list-frame"].style.visible = false --hide note list
 
@@ -162,7 +168,6 @@ function nukeAndRegenUI(player)
    }
 
    local noteListFrame =  constructNotesList(cGui)
-
 end
 
 function constructNotesList(gui)
