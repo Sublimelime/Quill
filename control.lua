@@ -9,7 +9,7 @@ require("gui_creation")
    denoted in the homepage of the mod.
 
    The below comments are mostly for the author's memory, but may help
-   some understand the gui scripting better.
+   some understand the gui scripting better. Please note that they are not comprehensive.
 
    GUI NAME DEFINITIONS ----------
    PLAYER.LEFT
@@ -63,3 +63,6 @@ script.on_configuration_changed(
       end
    end
 )
+
+--for debug, don't uncomment
+--commands.add_command("quill-print-all", "Prints all notes of everyone.", function() game.print(serpent.block(global.player_notes)) end)

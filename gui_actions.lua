@@ -20,7 +20,7 @@ script.on_event({defines.events.on_gui_click},
          makeNewNoteGUI(cGui)
       elseif element.name == "quill-cancel-button" then --used for making and editing notes
          element.parent.destroy()
-      elseif element.name == "quill-cancel-note-button" then
+      elseif element.name == "quill-cancel-note-button" then --cancel a note operation
          element.parent.parent.destroy()
          cGui["quill-notes-list-frame"].style.visible = true --show list again
       elseif element.name == "quill-cancel-rename-button" then
@@ -32,9 +32,8 @@ script.on_event({defines.events.on_gui_click},
          else
             saveAsNewNote(player)
          end
-
       elseif element.name == "quill-delete-note-button" then
-         if event.control then
+         if event.control then --a bit of a safety
             deleteCurrentNote(player)
          else
             player.print("Hold control while clicking to delete note.")
@@ -70,7 +69,6 @@ script.on_event({defines.events.on_gui_click},
             player.force.print("[" .. player.name .. "]: " .. string.sub(element.parent.parent["quill-note-text-box"].text,1,chars))
          end
       end
-
    end
 )
 
@@ -80,11 +78,11 @@ function renameNote(player)
    --fix the notes table
    global.player_notes[player.index][dropDown.selected_index].name = player.gui.center["quill-rename-note-frame"]["quill-rename-note-text-field"].text
 
-   --Fix the dropdown
+   --Fix the dropdown, pulling the items array out and putting it back is necessary
    local itemsList = dropDown.items
    itemsList[dropDown.selected_index] = player.gui.center["quill-rename-note-frame"]["quill-rename-note-text-field"].text
    dropDown.items = itemsList
-   dropDown.selected_index = #dropDown.items
+   dropDown.selected_index = #dropDown.items -- Done to refresh the dropdown
 end
 
 
@@ -130,6 +128,6 @@ function deleteCurrentNote(player)
    local itemsList = dropDown.items
    table.remove(itemsList, dropDown.selected_index)
    dropDown.items = itemsList
-   dropDown.selected_index = #dropDown.items
+   dropDown.selected_index = #dropDown.items --done to refresh the dropdown
 
 end
