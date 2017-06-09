@@ -53,3 +53,13 @@ script.on_event({defines.events.on_player_created},
       nukeAndRegenUI(game.players[e.player_index])
    end
 )
+
+script.on_configuration_changed(
+   function()
+      global.player_notes = global.player_notes or {}
+      for index,player in pairs(game.players) do --in case the mod was added to a save.
+         global.player_notes[index] = global.player_notes[index] or {}
+         nukeAndRegenUI(player)
+      end
+   end
+)
