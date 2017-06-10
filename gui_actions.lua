@@ -91,7 +91,7 @@ function saveAsNewNote(player)
    if player.gui.center["quill-new-note-frame"]["quill-note-text-box"] then
       local textBox = player.gui.center["quill-new-note-frame"]["quill-note-text-box"]
       --add the new note to the player's list of notes
-      table.insert(global.player_notes[player.index],{name="Untitled",contents=textBox.text})
+      table.insert(global.player_notes[player.index],{name = "Untitled",contents = textBox.text})
       --add the new note to the player's note list dropdown
       local dropDown = player.gui.center["quill-notes-list-frame"]["quill-notes-list-drop-down"]
       dropDown.add_item("Untitled")
