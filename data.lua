@@ -55,6 +55,14 @@ data:extend{
       width = 32,
       height = 32,
    },
+   {
+      type="sprite",
+      name="quill-sort-sprite",
+      filename = "__Quill__/graphics/sort.png",
+      priority = "extra-high",
+      width = 64,
+      height = 64,
+   },
 }
 
 data.raw["gui-style"].default.quill_buttons = {

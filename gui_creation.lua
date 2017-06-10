@@ -232,6 +232,14 @@ function constructNotesList(gui)
       caption = "Close",
       tooltip = "Closes this gui."
    }
+   noteListFrame.add{
+      type = "sprite-button",
+      name = "quill-sort-button",
+      style = "quill_buttons",
+      sprite = "quill-sort-sprite",
+      tooltip = "Sorts the list of notes alphabetically by title."
+   }
+
 
    return noteListFrame
 end

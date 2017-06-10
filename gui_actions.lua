@@ -1,4 +1,5 @@
 require("gui_creation")
+require("sorting")
 
 --A file that contains the on_event scripting for the mod's gui.
 
@@ -68,9 +69,16 @@ script.on_event({defines.events.on_gui_click},
             player.print("Player is not an admin, printing up to " .. chars .. " characters...")
             player.force.print("[" .. player.name .. "]: " .. string.sub(element.parent.parent["quill-note-text-box"].text,1,chars))
          end
-      end
-   end
+      elseif element.name == "quill-sort-button" then
+         if global.player_notes[player.index][cGui["quill-notes-list-frame"]["quill-notes-list-drop-down"].selected_index] then
+            sortNotes(player)
+         else
+            player.print("No notes to sort.")
+         end
+      end --ends chain of elseifs
+   end --ends function
 )
+
 
 --Actually does the rename of the current note
 function renameNote(player)
