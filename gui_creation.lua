@@ -229,6 +229,7 @@ function constructNotesList(gui)
    noteListFrame.add{
       type = "button",
       name = "quill-close-button",
+      style = "quill_buttons",
       caption = "Close",
       tooltip = "Closes this gui."
    }
