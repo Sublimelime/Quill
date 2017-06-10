@@ -6,7 +6,7 @@
 function makeRenameNoteGUI(gui)
    local player = game.players[gui.player_index]
    local dropDown = gui["quill-notes-list-frame"]["quill-notes-list-drop-down"]
-   local renameNoteFrame= gui.add{
+   local renameNoteFrame = gui.add{
       type = "frame",
       direction = "horizontal",
       name = "quill-rename-note-frame",
@@ -22,15 +22,17 @@ function makeRenameNoteGUI(gui)
       name = "quill-rename-note-text-field"
    }
    renameNoteFrame.add{
-      type = "button",
-      caption = "Rename",
+      type = "sprite-button",
+      style = "quill_buttons",
+      sprite = "quill-confirm-sprite",
       tooltip = "Rename this note.",
       name = "quill-confirm-rename-button"
    }
 
    renameNoteFrame.add{
-      type = "button",
-      caption = "Cancel",
+      type = "sprite-button",
+      style = "quill_buttons",
+      sprite = "quill-cancel-sprite",
       name = "quill-cancel-rename-button"
    }
    return renameNoteFrame
@@ -71,14 +73,16 @@ function makeExistingNoteGUI(gui)
       name = "quill-save-cancel-flow"
    }
    saveCancelFlow.add{
-      type = "button",
-      caption = "Save",
+      type = "sprite-button",
+      style = "quill_buttons",
+      sprite = "quill-confirm-sprite",
       tooltip = "Save note.",
       name = "quill-save-note-button"
    }
    saveCancelFlow.add{
-      type = "button",
-      caption = "Cancel",
+      type = "sprite-button",
+      style = "quill_buttons",
+      sprite = "quill-cancel-sprite",
       tooltip = "Exit without saving note.",
       name = "quill-cancel-note-button"
    }
@@ -126,14 +130,16 @@ function makeNewNoteGUI(gui)
       name = "quill-save-cancel-flow"
    }
    saveCancelFlow.add{
-      type = "button",
-      caption = "Save",
+      type = "sprite-button",
+      style = "quill_buttons",
+      sprite = "quill-confirm-sprite",
       tooltip = "Save as a new note.",
       name = "quill-save-note-button"
    }
    saveCancelFlow.add{
-      type = "button",
-      caption = "Cancel",
+      type = "sprite-button",
+      style = "quill_buttons",
+      sprite = "quill-cancel-sprite",
       tooltip = "Exit without saving note.",
       name = "quill-cancel-note-button"
    }
@@ -161,10 +167,11 @@ function nukeAndRegenUI(player)
    end
 
    lGui.add{ --add the open notes button
-      type = "button",
-      caption = "Notes",
+      type = "sprite-button",
       tooltip = "Click to open notes.",
-      name = "quill-open-notes"
+      name = "quill-open-notes",
+      sprite = "quill-notes-sprite",
+      style = "quill_small_buttons"
    }
 
    local noteListFrame =  constructNotesList(cGui)
@@ -191,28 +198,32 @@ function constructNotesList(gui)
    }
 
    operationsFlow.add{
-      type = "button",
+      type = "sprite-button",
       name = "quill-open-note-button",
-      caption = "Open note",
+      style = "quill_buttons",
+      sprite = "quill-open-note-sprite",
       tooltip = "Opens the selected note."
    }
 
    operationsFlow.add{
-      type = "button",
+      type = "sprite-button",
       name = "quill-new-note-button",
-      caption = "New note",
+      style = "quill_buttons",
+      sprite = "quill-add-note-sprite",
       tooltip = "Create a new note."
    }
    operationsFlow.add{
-      type = "button",
+      type = "sprite-button",
       name = "quill-delete-note-button",
-      caption = "Delete note",
+      style = "quill_buttons",
+      sprite = "quill-delete-sprite",
       tooltip = "Deletes the currently selected note. Must hold control to use."
    }
    operationsFlow.add{
-      type = "button",
+      type = "sprite-button",
       name = "quill-rename-note-button",
-      caption = "Rename note",
+      style = "quill_buttons",
+      sprite = "quill-rename-note-sprite",
       tooltip = "Renames the currently selected note."
    }
    noteListFrame.add{
