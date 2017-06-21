@@ -4,79 +4,79 @@ require("sorting")
 --A file that contains the on_event scripting for the mod's gui.
 
 script.on_event({defines.events.on_gui_click},
-    function(event)
-        local element = event.element
-        local player = game.players[event.player_index]
-        local cGui = player.gui.center
+function(event)
+    local element = event.element
+    local player = game.players[event.player_index]
+    local cGui = player.gui.center
 
-        if not string.find(element.name,"quill") then --has nothing to do with this mod
-            return
+    if not string.find(element.name,"quill") then --has nothing to do with this mod
+        return
+    end
+
+    if element.name == "quill-close-button" then --used only for the note list gui
+        element.parent.style.visible = false
+    elseif element.name == "quill-open-notes" and not cGui["quill-new-note-frame"] and not cGui["quill-existing-note-frame"] and not  cGui["quill-rename-note-frame"] then
+        cGui["quill-notes-list-frame"].style.visible = true
+    elseif element.name == "quill-new-note-button" then
+        makeNewNoteGUI(cGui)
+    elseif element.name == "quill-cancel-button" then --used for making and editing notes
+        element.parent.destroy()
+    elseif element.name == "quill-cancel-note-button" then --cancel a note operation
+        element.parent.parent.destroy()
+        cGui["quill-notes-list-frame"].style.visible = true --show list again
+    elseif element.name == "quill-cancel-rename-button" then
+        element.parent.destroy()
+        cGui["quill-notes-list-frame"].style.visible = true --show list again
+    elseif element.name == "quill-save-note-button" then
+        if element.parent.parent.name == "quill-existing-note-frame" then
+            saveExistingNote(player)
+        else
+            saveAsNewNote(player)
         end
-
-        if element.name == "quill-close-button" then --used only for the note list gui
-            element.parent.style.visible = false
-        elseif element.name == "quill-open-notes" and not cGui["quill-new-note-frame"] and not cGui["quill-existing-note-frame"] and not  cGui["quill-rename-note-frame"] then
+    elseif element.name == "quill-delete-note-button" then
+        if event.control then --a bit of a safety
+            deleteCurrentNote(player)
+        else
+            player.print("Hold control while clicking to delete note.")
+        end
+    elseif element.name == "quill-open-note-button" then
+        if global.player_notes[player.index][cGui["quill-notes-list-frame"]["quill-notes-list-drop-down"].selected_index] then
+            element.parent.parent.style.visible = false
+            makeExistingNoteGUI(cGui)
+        else
+            player.print("There is no note at that position.")
+        end
+    elseif element.name == "quill-rename-note-button" then
+        if global.player_notes[player.index][cGui["quill-notes-list-frame"]["quill-notes-list-drop-down"].selected_index] then
+            cGui["quill-notes-list-frame"].style.visible = false
+            makeRenameNoteGUI(cGui)
+        else
+            player.print("Cannot rename a non-existant note.")
+        end
+    elseif element.name == "quill-confirm-rename-button" then
+        if cGui["quill-rename-note-frame"]["quill-rename-note-text-field"].text ~= "" then
+            renameNote(player)
+            cGui["quill-rename-note-frame"].destroy()
             cGui["quill-notes-list-frame"].style.visible = true
-        elseif element.name == "quill-new-note-button" then
-            makeNewNoteGUI(cGui)
-        elseif element.name == "quill-cancel-button" then --used for making and editing notes
-            element.parent.destroy()
-        elseif element.name == "quill-cancel-note-button" then --cancel a note operation
-            element.parent.parent.destroy()
-            cGui["quill-notes-list-frame"].style.visible = true --show list again
-        elseif element.name == "quill-cancel-rename-button" then
-            element.parent.destroy()
-            cGui["quill-notes-list-frame"].style.visible = true --show list again
-        elseif element.name == "quill-save-note-button" then
-            if element.parent.parent.name == "quill-existing-note-frame" then
-                saveExistingNote(player)
-            else
-                saveAsNewNote(player)
-            end
-        elseif element.name == "quill-delete-note-button" then
-            if event.control then --a bit of a safety
-                deleteCurrentNote(player)
-            else
-                player.print("Hold control while clicking to delete note.")
-            end
-        elseif element.name == "quill-open-note-button" then
-            if global.player_notes[player.index][cGui["quill-notes-list-frame"]["quill-notes-list-drop-down"].selected_index] then
-                element.parent.parent.style.visible = false
-                makeExistingNoteGUI(cGui)
-            else
-                player.print("There is no note at that position.")
-            end
-        elseif element.name == "quill-rename-note-button" then
-            if global.player_notes[player.index][cGui["quill-notes-list-frame"]["quill-notes-list-drop-down"].selected_index] then
-                cGui["quill-notes-list-frame"].style.visible = false
-                makeRenameNoteGUI(cGui)
-            else
-                player.print("Cannot rename a non-existant note.")
-            end
-        elseif element.name == "quill-confirm-rename-button" then
-            if cGui["quill-rename-note-frame"]["quill-rename-note-text-field"].text ~= "" then
-                renameNote(player)
-                cGui["quill-rename-note-frame"].destroy()
-                cGui["quill-notes-list-frame"].style.visible = true
-            else
-                player.print("Cannot rename note to a blank name.")
-            end
-        elseif element.name == "quill-print-note-to-chat-button" then
-            if player.admin then
-                player.force.print("[" .. player.name .. "]: " .. element.parent.parent["quill-note-text-box"].text)
-            else --if player isn't an admin, printing length is based on online time, 1 char per min played.
-                local chars = math.floor((player.online_time / 60) / 60)
-                player.print("Player is not an admin, printing up to " .. chars .. " characters...")
-                player.force.print("[" .. player.name .. "]: " .. string.sub(element.parent.parent["quill-note-text-box"].text,1,chars))
-            end
-        elseif element.name == "quill-sort-button" then
-            if global.player_notes[player.index][cGui["quill-notes-list-frame"]["quill-notes-list-drop-down"].selected_index] then
-                sortNotes(player)
-            else
-                player.print("No notes to sort.")
-            end
-        end --ends chain of elseifs
-    end --ends function
+        else
+            player.print("Cannot rename note to a blank name.")
+        end
+    elseif element.name == "quill-print-note-to-chat-button" then
+        if player.admin then
+            player.force.print("[" .. player.name .. "]: " .. element.parent.parent["quill-note-text-box"].text)
+        else --if player isn't an admin, printing length is based on online time, 1 char per min played.
+            local chars = math.floor((player.online_time / 60) / 60)
+            player.print("Player is not an admin, printing up to " .. chars .. " characters...")
+            player.force.print("[" .. player.name .. "]: " .. string.sub(element.parent.parent["quill-note-text-box"].text,1,chars))
+        end
+    elseif element.name == "quill-sort-button" then
+        if global.player_notes[player.index][cGui["quill-notes-list-frame"]["quill-notes-list-drop-down"].selected_index] then
+            sortNotes(player)
+        else
+            player.print("No notes to sort.")
+        end
+    end --ends chain of elseifs
+end --ends function
 )
 
 
